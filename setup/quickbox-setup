@@ -39,7 +39,9 @@ read -ep "${bold}${yellow}Input the version you want: ${cyan}" inputversion; ech
 
 
 function _init() {
-apt-get install -y git lsb-release locales && git clone --depth=1 -b AniverseMod https://github.com/Aniverse/QB /etc/QuickBox || { echo -e "\n${bold}Please run apt-get update or check your apt sources list!${normal}\n" ; exit 1 ; } ; }
+apt-get install -y git lsb-release locales || { echo -e "\n${bold}Please run apt-get update or check your apt sources list!${normal}\n" ; exit 1 ; }
+[[ ! -d /etc/QuickBox ]] && git clone --depth=1 -b AniverseMod https://github.com/Aniverse/QB /etc/QuickBox
+[[ ! -d /etc/QuickBox ]] && { echo -e "\n${bold}${baihongse} ERROR ${jiacu}Could not clone QuickBox repo!${normal}\n" ; exit 1 ; } ; }
 
 
 function _bashrc() {
