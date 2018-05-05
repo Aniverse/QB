@@ -1035,7 +1035,7 @@ function _qbittorrent() { cd
 if [[ $CODENAME == jessie ]]; then
     apt-get install -y libgl1-mesa-dev >>"${OUTTO}" 2>&1
     wget --no-check-certificate -qO qt_5.5.1-1_amd64_debian8.deb https://github.com/Aniverse/BitTorrentClientCollection/raw/master/Other%20Tools/qt_5.5.1-1_amd64_debian8.deb
-    dpkg -i qt_5.5.1-1_amd64_debian8.deb >>"${OUTTO}" 2>&1
+    dpkg -i qt_5.5.1-1_amd64_debian8.deb && rm -f qt_5.5.1-1_amd64_debian8.deb >>"${OUTTO}" 2>&1
     export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/local/Qt-5.5.1/lib/pkgconfig
     export PATH=/usr/local/Qt-5.5.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 else
@@ -1056,7 +1056,7 @@ if [[ $QBPATCH == Yes ]]; then
 fi
 
 ./configure --disable-gui >>"${OUTTO}" 2>&1
-make -j$MAXCPUS >>"${OUTTO}" 2>&1
+make -j$(nproc) >>"${OUTTO}" 2>&1
 make install >>"${OUTTO}" 2>&1
 
 # mkdir -p doc-pak
@@ -1541,6 +1541,22 @@ EOF
       systemctl enable $i >>"${OUTTO}" 2>&1
     done
   rm -rf /root/tmp/
+
+endtime=$(date +%s)
+timeused=$(( $endtime - $starttime ))
+if [[ $timeused -gt 60 && $timeused -lt 3600 ]]; then
+    timeusedmin=$(expr $timeused / 60)
+    timeusedsec=$(expr $timeused % 60)
+    echo -e " ${baiqingse}${bold}The $timeWORK took about ${timeusedmin} min ${timeusedsec} sec${normal}"
+elif [[ $timeused -ge 3600 ]]; then
+    timeusedhour=$(expr $timeused / 3600)
+    timeusedmin=$(expr $(expr $timeused % 3600) / 60)
+    timeusedsec=$(expr $timeused % 60)
+    echo -e " ${baiqingse}${bold}The $timeWORK took about ${timeusedhour} hour ${timeusedmin} min ${timeusedsec} sec${normal}"
+else
+    echo -e " ${baiqingse}${bold}The $timeWORK took about ${timeused} sec${normal}"
+fi
+
   echo -ne "  Do you wish to reboot (recommended!): (Default ${green}Y${normal})"; read reboot
   case $reboot in
     [yY] | [yY][Ee][Ss] | "") reboot                 ;;
@@ -1622,9 +1638,9 @@ _denyhosts
 _askbbr
 
 tram=$( free -m | awk '/Mem/ {print $2}' )
-[[ $tram -le 2333 ]] && USESWAP=Yes
+[[ $tram -le 2333 ]] &&  { USESWAP=Yes
 echo -e "${bold}${red}Note that${normal} ${bold}Your RAM is below ${red}2333MB${jiacu}, memory may got exhausted when compiling${normal}"
-echo -e "${bold}${baiqingse} 1GB Additonal swap ${normal} will be used"
+echo -e "${bold}${baiqingse} 1GB Additonal swap ${normal} will be used" ; }
 
 echo -e "\n${bold}If you want to stop, Press ${on_red}Ctrl+C${normal} ${bold}; or Press ${on_green}ENTER${normal} ${bold}to start${normal}" ; [[ ! $ForceYes == 1 ]] && read input
 
@@ -1632,7 +1648,7 @@ clear
 echo
 echo ""
 echo "${bold}${magenta}QuickBox will now install, this may take between${normal}"
-echo "${bold}${magenta}10 and 45 minutes depending on your systems specs${normal}"
+echo "${bold}${magenta}10 and 60 minutes depending on your systems specs${normal}"
 echo ""
 [[ $USESWAP == Yes ]] && { echo -n "Creating Swap ... " ; _use_swap & spinner $!; echo ; }
 echo -n "Pulling QuickBox Ecosystem ... ";_repos & spinner $!;echo
@@ -1691,21 +1707,7 @@ DIFF=$(echo "$E" - "$S"|bc)
 FIN=$(echo "$DIFF" / 60|bc)
 
 [[ $USESWAP == Yes ]] && _disable_swap
-
-endtime=$(date +%s)
-timeused=$(( $endtime - $starttime ))
-if [[ $timeused -gt 60 && $timeused -lt 3600 ]]; then
-    timeusedmin=$(expr $timeused / 60)
-    timeusedsec=$(expr $timeused % 60)
-    echo -e " ${baiqingse}${bold}The $timeWORK took about ${timeusedmin} min ${timeusedsec} sec${normal}"
-elif [[ $timeused -ge 3600 ]]; then
-    timeusedhour=$(expr $timeused / 3600)
-    timeusedmin=$(expr $(expr $timeused % 3600) / 60)
-    timeusedsec=$(expr $timeused % 60)
-    echo -e " ${baiqingse}${bold}The $timeWORK took about ${timeusedhour} hour ${timeusedmin} min ${timeusedsec} sec${normal}"
-else
-    echo -e " ${baiqingse}${bold}The $timeWORK took about ${timeused} sec${normal}"
-fi
-
 clear
+
+
 _finished
