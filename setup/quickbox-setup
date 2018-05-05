@@ -1508,7 +1508,7 @@ function _finished() {
   echo
   echo
   echo -e " ${black}${on_green}    [quickbox] Seedbox & GUI Installation Completed    ${normal} "
-  echo -e "        ${standout}    INSTALLATION COMPLETED in ${FIN}/min    ${normal}             "
+# echo -e "        ${standout}    INSTALLATION COMPLETED in ${FIN}/min    ${normal}             "
   echo;echo
   echo "  Valid Commands:  "
   echo '  -------------------'
