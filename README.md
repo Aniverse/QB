@@ -11,7 +11,9 @@ bash -c "$(wget --no-check-certificate -qO- https://github.com/Aniverse/QB/raw/A
 
 ## QuickBox Aniverse Mod
 
-我这个只是一个很粗糙的修改版，肯定有一些小问题（不过 QuickBox 本身的毛病也是很多的……）
+这个版本是在 [efs 的修改版](https://github.com/amefs/QB) 上再次修改的版本  
+我的改动比较粗糙，基本上只改了 setup，其他没怎么动，仅在 Vultr VPS Debian 8 下测试过，其他情况没试过（懒）  
+这些改动带来的小问题应该是有的（不过原版的 QuickBox 本身小问题也很多……），然而我之后也不一定会维护这个脚本……    
 
 * Deluge：改为必装软件，增加 1.3.9／1.3.13／1.3.15 跳校验版 等可选版本
 * Deluge：增加 Stats、TotalTraffic、AutoRemovePlus、YaRSS2 等一堆插件
