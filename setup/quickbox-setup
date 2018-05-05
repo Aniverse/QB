@@ -1109,8 +1109,8 @@ systemctl start qbittorrent@${username} >/dev/null 2>&1
 cd ; sleep 10
 systemctl stop {qbittorrent}@${username} >/dev/null 2>&1
 cp -f ${local_setup}templates/qBittorrent.conf.template /home/${username}/.config/qBittorrent/qBittorrent.conf
-sed -i "s/admin/${username}/g" /home/${username}/.config/qBittorrent/qBittorrent.conf
-sed -i "s/5ebe2294ecd0e0f08eab7690d2a6ee69/${ha1pass}/g" /home/${username}/.config/qBittorrent/qBittorrent.conf
+sed -i "s/SCRIPTUSERNAME/${username}/g" /home/${username}/.config/qBittorrent/qBittorrent.conf
+sed -i "s/SCRIPTQBPASS/${ha1pass}/g" /home/${username}/.config/qBittorrent/qBittorrent.conf
 sed -i "s/mySavePath/\/home\/${username}\/torrents\/qbittorrent/g" /home/${username}/.config/qBittorrent/qBittorrent.conf
 chmod -R 755 /home/${username}/.config/
 chown -R ${username}.${username} /home/${username}/.config/
@@ -1190,7 +1190,7 @@ function _fileindexer() {
   echo "DirectoryIndex index.html index.php /_h5ai/public/index.php" >> /etc/apache2/apache2.conf
   ln -s /home/${username}/torrents/rtorrent/ ${username}.rtorrent.downloads
   ln -s /home/${username}/torrents/deluge/ ${username}.deluge.downloads
-  ln -s /home/${username}/torrents/transmission/ ${username}.transmission.downloads
+  if [[ ${tr} == "yes" ]]; then ln -s /home/${username}/torrents/transmission/ ${username}.transmission.downloads ; fi
   ln -s /home/${username}/torrents/qbittorrent/ ${username}.qbittorrent.downloads
 }
 
@@ -1683,9 +1683,11 @@ echo -n "Installing rutorrent into /srv ... ";_rutorrent & spinner $!;echo
 echo -n "Installing rutorrent plugins ... ";_rutorrent-plugins & spinner $!;echo
 echo -n "Installing deluge ... ";_deluge & spinner $!;echo
 echo -n "Setting up deluge Web Reverse Proxy ... ";_insdwApache & spinner $!;echo
-echo -n "Configuring Transmisson ... ";_insTr & spinner $!;echo
-echo -n "Installing Transmisson Web Control ... ";_insTrWeb & spinner $!;echo
-echo -n "Setting up Transmission Reverse Proxy ... ";_insTrApache & spinner $!;echo
+if [[ ${tr} == "yes" ]]; then
+    echo -n "Configuring Transmisson ... ";_insTr & spinner $!;echo
+    echo -n "Installing Transmisson Web Control ... ";_insTrWeb & spinner $!;echo
+    echo -n "Setting up Transmission Reverse Proxy ... ";_insTrApache & spinner $!;echo
+fi
 echo -n "Installing qBittorrent ... ";_qbittorrent & spinner $!;echo
 echo -n "Setting up qBittorrent Reverse Proxy ... ";_insqBApache & spinner $!;echo
 echo -n "Installing mktorrent from source ... ";_mktorrent & spinner $!;echo
