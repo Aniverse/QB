@@ -32,6 +32,8 @@ shanshuo=$(tput blink); wuguangbiao=$(tput civis); guangbiao=$(tput cnorm)
 function _string() { perl -le 'print map {(a..z,A..Z,0..9)[rand 62] } 0..pop' 15 ; }
 #################################################################################
 
+sshport=$(grep -P '^[#\s]*Port ' /etc/ssh/sshd_config | sed 's/[^0-9]*//g')
+
 ### 输入自己想要的软件版本 ###
 function _inputversion() {
 echo -e "\n${baihongse}${bold} ATTENTION ${normal} ${bold}Make sure to input the correct version${normal}"
@@ -1031,6 +1033,7 @@ EOF
 function _qbittorrent() { cd
 
 if [[ $CODENAME == jessie ]]; then
+    apt-get install -y libgl1-mesa-dev >>"${OUTTO}" 2>&1
     wget --no-check-certificate -qO qt_5.5.1-1_amd64_debian8.deb https://github.com/Aniverse/BitTorrentClientCollection/raw/master/Other%20Tools/qt_5.5.1-1_amd64_debian8.deb
     dpkg -i qt_5.5.1-1_amd64_debian8.deb >>"${OUTTO}" 2>&1
     export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/local/Qt-5.5.1/lib/pkgconfig
@@ -1054,13 +1057,13 @@ fi
 
 ./configure --disable-gui >>"${OUTTO}" 2>&1
 make -j$MAXCPUS >>"${OUTTO}" 2>&1
+make install >>"${OUTTO}" 2>&1
 
-mkdir -p doc-pak
-cat >description-pak<<EOF
-qBittorrent BitTorrent client headless (qbittorrent-nox)
-EOF
-
-checkinstall -y --pkgname=qbittorrent-headless --pkgversion=$QBVERSION --pkggroup qbittorrent >>"${OUTTO}" 2>&1
+# mkdir -p doc-pak
+# cat >description-pak<<EOF
+# qBittorrent BitTorrent client headless (qbittorrent-nox)
+# EOF
+# checkinstall -y --pkgname=qbittorrent-headless --pkgversion=$QBVERSION --pkggroup qbittorrent >>"${OUTTO}" 2>&1
 
 cp ${local_setup}templates/sysd/qbittorrent.template/etc/systemd/system/qbittorrent@.service >/dev/null 2>&1
 systemctl enable qbittorrent@${username} >/dev/null 2>&1
@@ -1520,17 +1523,17 @@ function _finished() {
   echo;echo;echo
   echo '################################################################################################'
   echo "#   Seedbox can be found at https://${username}:${passwd}@${ip} "
-  echo "#   ${cyan}(Also works for FTP:5757/SSH:4747)${normal}"
+  echo "#   ${cyan}(Also works for FTP:5757/SSH:$sshport)${normal}"
   echo "#   If you need to restart rtorrent/irssi, you can type 'reload'"
-  echo "#   https://${username}:${passwd}@${ip} (Also works for FTP:5757/SSH:4747)" > ${username}.info
+  echo "#   https://${username}:${passwd}@${ip} (Also works for FTP:5757/SSH:$sshport)" > ${username}.info
   echo "#   Reloading: ${green}sshd${normal}, ${green}apache${normal}, ${green}memcached${normal}, ${green}php7.0${normal}, ${green}vsftpd${normal} and ${green}fail2ban${normal}"
   echo '################################################################################################'
   echo
 
 cat >/root/information.info<<EOF
-  Seedbox can be found at https://${username}:${passwd}@${ip} (Also works for FTP:5757/SSH:22)
+  Seedbox can be found at https://${username}:${passwd}@${ip} (Also works for FTP:5757/SSH:$sshport)
   If you need to restart rtorrent/irssi, you can type 'reload'
-  https://${username}:${passwd}@${ip} (Also works for FTP:5757/SSH:22)
+  https://${username}:${passwd}@${ip} (Also works for FTP:5757/SSH:$sshport)
 EOF
   rm -rf "$0" >>"${OUTTO}" 2>&1
     for i in ssh apache2 php7.0-fpm vsftpd fail2ban quota memcached cron; do
