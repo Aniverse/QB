@@ -1035,7 +1035,8 @@ function _qbittorrent() { cd
 if [[ $CODENAME == jessie ]]; then
     apt-get install -y libgl1-mesa-dev >>"${OUTTO}" 2>&1
     wget --no-check-certificate -qO qt_5.5.1-1_amd64_debian8.deb https://github.com/Aniverse/BitTorrentClientCollection/raw/master/Other%20Tools/qt_5.5.1-1_amd64_debian8.deb
-    dpkg -i qt_5.5.1-1_amd64_debian8.deb && rm -f qt_5.5.1-1_amd64_debian8.deb >>"${OUTTO}" 2>&1
+    dpkg -i qt_5.5.1-1_amd64_debian8.deb >>"${OUTTO}" 2>&1
+    rm -f qt_5.5.1-1_amd64_debian8.deb >>"${OUTTO}" 2>&1
     export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/local/Qt-5.5.1/lib/pkgconfig
     export PATH=/usr/local/Qt-5.5.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 else
@@ -1065,9 +1066,10 @@ make install >>"${OUTTO}" 2>&1
 # EOF
 # checkinstall -y --pkgname=qbittorrent-headless --pkgversion=$QBVERSION --pkggroup qbittorrent >>"${OUTTO}" 2>&1
 
-cp ${local_setup}templates/sysd/qbittorrent.template/etc/systemd/system/qbittorrent@.service >/dev/null 2>&1
+cp ${local_setup}templates/sysd/qbittorrent.template /etc/systemd/system/qbittorrent@.service >/dev/null 2>&1
 systemctl enable qbittorrent@${username} >/dev/null 2>&1
 cd ; sleep 10
+mkdir -p /home/${username}/.config/qBittorrent
 cp -f ${local_setup}templates/qBittorrent.conf.template /home/${username}/.config/qBittorrent/qBittorrent.conf
 sed -i "s/SCRIPTUSERNAME/${username}/g" /home/${username}/.config/qBittorrent/qBittorrent.conf
 sed -i "s/SCRIPTQBPASS/${ha1pass}/g" /home/${username}/.config/qBittorrent/qBittorrent.conf
@@ -1547,17 +1549,17 @@ timeused=$(( $endtime - $starttime ))
 if [[ $timeused -gt 60 && $timeused -lt 3600 ]]; then
     timeusedmin=$(expr $timeused / 60)
     timeusedsec=$(expr $timeused % 60)
-    echo -e " ${baiqingse}${bold}The $timeWORK took about ${timeusedmin} min ${timeusedsec} sec${normal}"
+    echo -e "  ${baiqingse}${bold}The Installation took about ${timeusedmin} min ${timeusedsec} sec${normal}"
 elif [[ $timeused -ge 3600 ]]; then
     timeusedhour=$(expr $timeused / 3600)
     timeusedmin=$(expr $(expr $timeused % 3600) / 60)
     timeusedsec=$(expr $timeused % 60)
-    echo -e " ${baiqingse}${bold}The $timeWORK took about ${timeusedhour} hour ${timeusedmin} min ${timeusedsec} sec${normal}"
+    echo -e "  ${baiqingse}${bold}The Installation took about ${timeusedhour} hour ${timeusedmin} min ${timeusedsec} sec${normal}"
 else
-    echo -e " ${baiqingse}${bold}The $timeWORK took about ${timeused} sec${normal}"
+    echo -e "  ${baiqingse}${bold}The Installation took about ${timeused} sec${normal}"
 fi
 
-  echo -ne "  Do you wish to reboot (recommended!): (Default ${green}Y${normal})"; read reboot
+  echo -ne "\n  Do you wish to reboot (recommended!): (Default ${green}Y${normal})"; read reboot
   case $reboot in
     [yY] | [yY][Ee][Ss] | "") reboot                 ;;
     [nN] | [nN][Oo] ) echo "  ${cyan}Skipping reboot${normal} ... " ;;
