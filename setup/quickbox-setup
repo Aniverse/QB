@@ -37,6 +37,11 @@ function _inputversion() {
 echo -e "\n${baihongse}${bold} ATTENTION ${normal} ${bold}Make sure to input the correct version${normal}"
 read -ep "${bold}${yellow}Input the version you want: ${cyan}" inputversion; echo -n "${normal}" ; }
 
+
+function _init() {
+apt-get install -y git lsb_release locales && git clone --depth=1 -b AniverseMod https://github.com/Aniverse/QB /etc/QuickBox || echo -e "\n${bold}Please run apt-get update or check your apt sources list!${normal}\n" ; }
+
+
 function _bashrc() {
   cp ${local_setup}templates/bashrc.template /root/.bashrc
   profile="/root/.profile"
@@ -47,13 +52,14 @@ function _bashrc() {
 
 # intro function (1)
 function _intro() {
+  clear
   DISTRO=$(lsb_release -is)
   RELEASE=$(lsb_release -rs)
   CODENAME=$(lsb_release -cs)
   SETNAME=$(lsb_release -rc)
   echo
   echo
-  echo "[${repo_title}QuickBox${normal}] ${title} QuickBox Seedbox Installation ${normal} "
+  echo "[${repo_title}QuickBox${normal}] ${title} Aniverse Mod Installation ${normal} "
   echo
   echo "   ${title}              Heads Up!              	    ${normal} "
   echo "   ${message_title}  QuickBox works with the following  ${normal} "
@@ -66,7 +72,6 @@ function _intro() {
     echo "Exiting..."
     exit 1
   fi
-  echo "$(lsb_release -a)"
   echo
   if [[ ! "$DISTRO" =~ ("Ubuntu"|"Debian") ]]; then
     echo "$DISTRO: ${alert} It looks like you are running $DISTRO, which is not supported by QuickBox ${normal} "
@@ -214,8 +219,6 @@ echo 'LC_ALL="en_US.UTF-8"' >> /etc/default/locale
 echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
   if [[ -e /usr/sbin/locale-gen ]]; then locale-gen >>"${OUTTO}" 2>&1
   else
-    apt-get -y update >>"${OUTTO}" 2>&1
-    apt-get install locales -y >>"${OUTTO}" 2>&1
     locale-gen >>"${OUTTO}" 2>&1
     export LANG="en_US.UTF-8"
     export LC_ALL="en_US.UTF-8"
@@ -304,16 +307,7 @@ echo "${bold}${baiqingse}Deluge ${DEVERSION}${normal} ${bold}will be installed${
 echo ; }
 
 
-# install transmission question (8.5)
-function _asktr() {
-  echo -ne "${bold}${yellow}Would you like to install transmission? ${normal} [y]es or [${green}n${normal}]o: "; read responce
-  case $responce in
-    [yY] | [yY][Ee][Ss]) tr=yes ;;
-    [nN] | [nN][Oo] | "" ) tr=no ;;
-    *) tr=no ;;
-  esac
-  echo
-}
+
 # install qbittorrent question (8.8)
 function _askqb() {
 echo -e "${green}01)${normal} qBittorrent ${cyan}3.3.7${normal}"
@@ -342,6 +336,19 @@ case $version in
 esac
 }
 
+
+# install transmission question (8.5)
+function _asktr() {
+  echo -ne "${bold}${yellow}Would you like to install transmission? ${normal} [y]es or [${green}n${normal}]o: "; read responce
+  case $responce in
+    [yY] | [yY][Ee][Ss]) tr=yes ;;
+    [nN] | [nN][Oo] | "" ) tr=no ;;
+    *) tr=no ;;
+  esac
+  echo
+}
+
+
 # adduser function (9)
 function _adduser() {
   theshell="/bin/bash";
@@ -366,16 +373,6 @@ function _adduser() {
   ha1pass=`echo -n "${passwd}"|md5sum |cut -f1 -d' '`
 }
 
-# install ffmpeg question (10)
-function _askffmpeg() {
-  echo -ne "${bold}${yellow}Would you like to install ffmpeg? (Used for screenshots)${normal} [${green}y${normal}]es or [n]o: "; read responce
-  case $responce in
-    [yY] | [yY][Ee][Ss] | "" ) ffmpeg=yes ;;
-    [nN] | [nN][Oo] ) ffmpeg=no ;;
-    *) ffmpeg=yes ;;
-  esac
-  echo
-}
 
 # ask user for pure-ftpd conf (10.5)
 function _askvsftpd() {
@@ -611,57 +608,16 @@ function _lshell() {
   cp ${local_setup}templates/lshell.conf.template /etc/lshell.conf
 }
 
+
 # build function for ffmpeg (17)
 function _ffmpeg() {
-  if [[ ${ffmpeg} == "yes" ]]; then
-    MAXCPUS=$(echo "$(nproc) / 2"|bc)
-    if [[ $DISTRO == Ubuntu ]]; then
-      apt-get -y install x265 >>"${OUTTO}" 2>&1
-    elif [[ $DISTRO == Debian ]]; then
-      apt-get -y install -t jessie-backports x265 >>"${OUTTO}" 2>&1
-    fi
-    mkdir /root/tmp
-    cd /root/tmp
-    if [[ -d /root/tmp/ffmpeg ]]; then rm -rf ffmpeg;fi
-    git clone --depth 1 -b release/3.2 https://github.com/FFmpeg/FFmpeg.git ffmpeg >>"${OUTTO}" 2>&1
-    git clone git://github.com/yasm/yasm.git ffmpeg/yasm >>"${OUTTO}" 2>&1
-    git clone https://github.com/yixia/x264.git ffmpeg/x264 >>"${OUTTO}" 2>&1
-    ############################################################################
-    ## x265 needs to be manually compiled - there is no non-interactive option.
-    #git clone https://github.com/videolan/x265.git ffmpeg/x265 >>"${OUTTO}" 2>&1
-    ############################################################################
-    ####---- Github Mirror source ----####
-    #git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg >>"${OUTTO}" 2>&1
-    ############################################################################
-    cd ffmpeg/yasm
-    ./autogen.sh >>"${OUTTO}" 2>&1
-    ./configure >>"${OUTTO}" 2>&1
-    make >>"${OUTTO}" 2>&1
-    make install >>"${OUTTO}" 2>&1
-    cd ../x264
-    ./configure --enable-static --enable-shared >>"${OUTTO}" 2>&1
-    make >>"${OUTTO}" 2>&1
-    make install >>"${OUTTO}" 2>&1
-    ldconfig >>"${OUTTO}" 2>&1
-    ############################################################################
-    ## x265 needs to be manually compiled - there is no non-interactive option.
-    #cd ../x265/build/linux
-    #./make-Makefiles.bash >>"${OUTTO}" 2>&1
-    #make >>"${OUTTO}" 2>&1
-    #make install >>"${OUTTO}" 2>&1
-    #ldconfig >>"${OUTTO}" 2>&1
-    ############################################################################
-    cd /root/tmp/ffmpeg
-    export FC_CONFIG_DIR=/etc/fonts
-    export FC_CONFIG_FILE=/etc/fonts/fonts.conf
-    ./configure --enable-libfreetype --enable-filter=drawtext --enable-fontconfig --disable-asm --enable-libx264 --enable-gpl >>"${OUTTO}" 2>&1
-    make -j${MAXCPUS} >>"${OUTTO}" 2>&1
-    make install >>"${OUTTO}" 2>&1
-    cp /usr/local/bin/ffmpeg /usr/bin >>"${OUTTO}" 2>&1
-    cp /usr/local/bin/ffprobe /usr/bin >>"${OUTTO}" 2>&1
-    rm -rf /root/tmp/ffmpeg >>"${OUTTO}" 2>&1
-  fi
-}
+cd ; wget --no-check-certificate -O ffmpeg-3.4.2-64bit-static.tar.xz https://github.com/Aniverse/BitTorrentClientCollection/raw/master/Other%20Tools/ffmpeg-3.4.2-64bit-static.tar.xz >>"${OUTTO}" 2>&1
+tar xf ffmpeg-3.4.2-64bit-static.tar.xz
+rm -rf ffmpeg-*-64bit-static/{manpages,GPLv3.txt,readme.txt}
+cp -f ffmpeg-*-64bit-static/* /usr/bin
+chmod 777 /usr/bin/{ffmpeg,ffprobe,ffmpeg-10bit,qt-faststart}
+rm -rf ffmpeg-*-64bit-static* ; }
+
 
 # function to enable sudo for www-data function (18)
 function _apachesudo() {
@@ -1169,6 +1125,7 @@ function _rutorrent-plugins() {
   if [[ -d /srv/rutorrent/plugins ]]; then rm -rf plugins;fi
   mkdir plugins
   cp -R ${local_rplugins}/. plugins
+  apt-get install -y sox libsox-fmt-mp3  >>"${OUTTO}" 2>&1
 }
 
 # function to install dashboard (23)
@@ -1188,9 +1145,9 @@ function _fileindexer() {
   chmod 775 -R _h5ai/private/cache && chmod 775 -R _h5ai/public/cache
   apt -y install imagemagick >>"${OUTTO}" 2>&1
   echo "DirectoryIndex index.html index.php /_h5ai/public/index.php" >> /etc/apache2/apache2.conf
+  [[ ${tr} == "yes" ]] && ln -s /home/${username}/torrents/transmission/ ${username}.transmission.downloads
   ln -s /home/${username}/torrents/rtorrent/ ${username}.rtorrent.downloads
   ln -s /home/${username}/torrents/deluge/ ${username}.deluge.downloads
-  if [[ ${tr} == "yes" ]]; then ln -s /home/${username}/torrents/transmission/ ${username}.transmission.downloads ; fi
   ln -s /home/${username}/torrents/qbittorrent/ ${username}.qbittorrent.downloads
 }
 
@@ -1631,6 +1588,7 @@ export DEBIAN_FRONTEND=noninteractive
 cd
 
 # QuickBox STRUCTURE
+_init
 _bashrc
 _intro
 _checkroot
@@ -1647,11 +1605,11 @@ clear
 _askpartition
 _askrtorrent
 _askdeluge
-_asktr
 _askqb
-_askdashtheme
+_asktr
+# _askdashtheme
+dash_theme=defaulted
 _adduser
-_askffmpeg
 _askvsftpd
 _denyhosts
 _askbbr
@@ -1672,9 +1630,7 @@ if [[ ${quota} == "yes" ]]; then
 echo -n "Setting up quotas for ${green}/($primaryroot)${normal} mount ... ";_qmount & spinner $!;echo
 fi
 echo -n "Setting up Limited Shell environment ... ";_lshell & spinner $!;echo
-if [[ ${ffmpeg} == "yes" ]]; then
-    echo -n "Building ffmpeg from source for screenshots ... ";_ffmpeg & spinner $!;echo
-fi
+echo -n "Installing ffmpeg for screenshots ... ";_ffmpeg & spinner $!;echo
 _apachesudo
 echo -n "Installing xmlrpc-c-${green}1.33.12${normal} ... ";_xmlrpc & spinner $!;echo
 echo -n "Installing libtorrent-${green}$LTORRENT${normal} ... ";_libtorrent & spinner $!;echo
@@ -1702,6 +1658,8 @@ echo -n "Making ${username} directory structure ... ";_makedirs & spinner $!;ech
 echo -n "Writing ${username} rutorrent config.php file ... ";_ruconf & spinner $!;echo
 echo -n "Installing vsftpd ... ";_installftpd & spinner $!;echo
 echo -n "Setting up vsftpd ... ";_ftpdconfig & spinner $!;echo
+# 安装我自己的脚本
+for JIAOBEN in jietu bdinfo bluray mingling guazai ipv6 xiansu zuozhong bdjietu ; do wget -qO /usr/local/bin/$JIAOBEN https://github.com/Aniverse/inexistence/raw/master/00.Installation/script/$JIAOBEN && chmod +x /usr/local/bin/$JIAOBEN ; done
 _quickstats;
 _quickconsole;
 echo -n "Setting irssi/rtorrent to start on boot ... ";_boot & spinner $!;echo;
