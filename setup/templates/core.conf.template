@@ -32,7 +32,7 @@
     "Stats"
   ],
   "max_half_open_connections": -1,
-  "download_location": "/home/USERNAME/Downloads",
+  "download_location": "/home/USERNAME/torrents/deluge",
   "compact_allocation": true,
   "max_upload_speed": -1.0,
   "plugins_location": "/home/USERNAME/.config/deluge/plugins",
