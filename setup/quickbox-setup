@@ -37,7 +37,13 @@ function _inputversion() {
 echo -e "\n${baihongse}${bold} ATTENTION ${normal} ${bold}Make sure to input the correct version${normal}"
 read -ep "${bold}${yellow}Input the version you want: ${cyan}" inputversion; echo -n "${normal}" ; }
 
+# 增加 swap
+function _use_swap() { dd if=/dev/zero of=/root/.swapfile bs=1M count=1024  ;  mkswap /root/.swapfile  ;  swapon /root/.swapfile  ;  swapon -s  ;  }
 
+# 关掉之前开的 swap
+function _disable_swap() { swapoff /root/.swapfile  ;  rm -f /.swapfile ; }
+
+# 初始化
 function _init() {
 apt-get install -y git lsb-release locales || { echo -e "\n${bold}Please run apt-get update or check your apt sources list!${normal}\n" ; exit 1 ; }
 [[ ! -d /etc/QuickBox ]] && git clone --depth=1 -b AniverseMod https://github.com/Aniverse/QB /etc/QuickBox
@@ -1600,6 +1606,8 @@ _ssdpblock
 _locale
 clear
 
+starttime=$(date +%s)
+
 #_askservices
 _askpartition
 _askrtorrent
@@ -1612,13 +1620,21 @@ _adduser
 _askvsftpd
 _denyhosts
 _askbbr
-clear
 
+tram=$( free -m | awk '/Mem/ {print $2}' )
+[[ $tram -le 1926 ]] && USESWAP=Yes
+echo -e "${bold}${red}Note that${normal} ${bold}Your RAM is below ${red}1926MB${jiacu}, memory may got exhausted when compiling${normal}"
+echo -e "${bold}${baiqingse} 1GB Additonal swap ${normal} will be used"
+
+echo -e "\n${bold}If you want to stop, Press ${on_red}Ctrl+C${normal} ${bold}; or Press ${on_green}ENTER${normal} ${bold}to start${normal}" ; [[ ! $ForceYes == 1 ]] && read input
+
+clear
 echo
 echo ""
 echo "${bold}${magenta}QuickBox will now install, this may take between${normal}"
 echo "${bold}${magenta}10 and 45 minutes depending on your systems specs${normal}"
 echo ""
+[[ $USESWAP == Yes ]] && { echo -n "Creating Swap ... " ; _use_swap & spinner $!; echo ; }
 echo -n "Pulling QuickBox Ecosystem ... ";_repos & spinner $!;echo
 echo -n "Updating system ... ";_updates & spinner $!;echo
 echo -n "Installing all needed dependencies ... ";_depends & spinner $!;echo
@@ -1673,5 +1689,23 @@ cd
 E=$(date +%s)
 DIFF=$(echo "$E" - "$S"|bc)
 FIN=$(echo "$DIFF" / 60|bc)
+
+[[ $USESWAP == Yes ]] && _disable_swap
+
+endtime=$(date +%s)
+timeused=$(( $endtime - $starttime ))
+if [[ $timeused -gt 60 && $timeused -lt 3600 ]]; then
+    timeusedmin=$(expr $timeused / 60)
+    timeusedsec=$(expr $timeused % 60)
+    echo -e " ${baiqingse}${bold}The $timeWORK took about ${timeusedmin} min ${timeusedsec} sec${normal}"
+elif [[ $timeused -ge 3600 ]]; then
+    timeusedhour=$(expr $timeused / 3600)
+    timeusedmin=$(expr $(expr $timeused % 3600) / 60)
+    timeusedsec=$(expr $timeused % 60)
+    echo -e " ${baiqingse}${bold}The $timeWORK took about ${timeusedhour} hour ${timeusedmin} min ${timeusedsec} sec${normal}"
+else
+    echo -e " ${baiqingse}${bold}The $timeWORK took about ${timeused} sec${normal}"
+fi
+
 clear
 _finished
