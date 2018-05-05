@@ -48,6 +48,7 @@ function _disable_swap() { swapoff /root/.swapfile  ;  rm -f /.swapfile ; }
 # 初始化
 function _init() {
 apt-get install -y git lsb-release locales || { echo -e "\n${bold}Please run apt-get update or check your apt sources list!${normal}\n" ; exit 1 ; }
+TR_repo_ver=` apt-cache policy transmission-daemon | grep -B1 http | grep -Eo "[23]\.[0-9.]+" | head -n1 `
 [[ ! -d /etc/QuickBox ]] && git clone --depth=1 -b AniverseMod https://github.com/Aniverse/QB /etc/QuickBox
 [[ ! -d /etc/QuickBox ]] && { echo -e "\n${bold}${baihongse} ERROR ${jiacu}Could not clone QuickBox repo!${normal}\n" ; exit 1 ; } ; }
 
@@ -268,15 +269,15 @@ function _askdashtheme() {
 
 # ask what rtorrent version (8)
 function _askrtorrent() {
-  echo -e "1) rtorrent ${green}0.9.6 (with ipv6 support)${normal}"
-  echo -e "2) rtorrent ${green}0.9.4 (with ipv6 support)${normal}"
-  echo -e "3) rtorrent ${green}0.9.3${normal}"
-  echo -ne "${bold}${yellow}What version of rtorrent do you want?${normal} (Default ${green}1${normal}): "; read -e version
+  echo -e "${green}01)${normal} rtorrent ${green}0.9.6 (with ipv6 support)${normal}"
+  echo -e "${green}02)${normal} rtorrent ${green}0.9.4 (with ipv6 support)${normal}"
+  echo -e "${green}03)${normal} rtorrent ${green}0.9.3${normal}"
+  echo -ne "${bold}${yellow}Which version of rtorrent do you want?${normal} (Default ${green}02${normal}): "; read -e version
   case $version in
-    1 | "") RTVERSION=0.9.6;LTORRENT=0.13.6  ;;
-    2) RTVERSION=0.9.4;LTORRENT=0.13.4  ;;
+    1) RTVERSION=0.9.6;LTORRENT=0.13.6  ;;
+    2 | "") RTVERSION=0.9.4;LTORRENT=0.13.4  ;;
     3) RTVERSION=0.9.3;LTORRENT=0.13.3 ;;
-    *) RTVERSION=0.9.6;LTORRENT=0.13.6  ;;
+    *) RTVERSION=0.9.4;LTORRENT=0.13.4  ;;
   esac
   echo "${bold}${baiqingse}rTorrent $RTVERSION${normal} ${bold}will be installed${normal}"
   echo
@@ -352,6 +353,8 @@ function _asktr() {
     [nN] | [nN][Oo]) tr=no ;;
     *) tr=yes ;;
   esac
+  if [[ $tr == yes ]]; then echo "${bold}${baiqingse}Transmission $TR_repo_ver${normal} ${bold}will be installed from repository${normal}"
+  else echo "${baizise}Transmission will ${baihongse}not${baizise} be installed${normal}" ; fi
   echo
 }
 
@@ -1642,9 +1645,9 @@ _askbbr
 tram=$( free -m | awk '/Mem/ {print $2}' )
 [[ $tram -le 2333 ]] &&  { USESWAP=Yes
 echo -e "${bold}${red}Note that${normal} ${bold}Your RAM is below ${red}2333MB${jiacu}, memory may got exhausted when compiling${normal}"
-echo -e "${bold}${baiqingse} 1GB Additonal swap ${normal} will be used" ; }
+echo -e "${bold}${baiqingse} 1GB Additonal swap ${normal} will be used\n" ; }
 
-echo -e "\n${bold}If you want to stop, Press ${on_red}Ctrl+C${normal} ${bold}; or Press ${on_green}ENTER${normal} ${bold}to start${normal}" ; [[ ! $ForceYes == 1 ]] && read input
+echo -e "${bold}If you want to stop, Press ${on_red}Ctrl+C${normal} ${bold}; or Press ${on_green}ENTER${normal} ${bold}to start${normal}" ; [[ ! $ForceYes == 1 ]] && read input
 
 clear
 echo
