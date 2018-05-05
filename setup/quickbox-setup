@@ -39,7 +39,7 @@ read -ep "${bold}${yellow}Input the version you want: ${cyan}" inputversion; ech
 
 
 function _init() {
-apt-get install -y git lsb_release locales && git clone --depth=1 -b AniverseMod https://github.com/Aniverse/QB /etc/QuickBox || echo -e "\n${bold}Please run apt-get update or check your apt sources list!${normal}\n" ; }
+apt-get install -y git lsb-release locales && git clone --depth=1 -b AniverseMod https://github.com/Aniverse/QB /etc/QuickBox || { echo -e "\n${bold}Please run apt-get update or check your apt sources list!${normal}\n" ; exit 1 ; } ; }
 
 
 function _bashrc() {
@@ -261,26 +261,26 @@ function _askrtorrent() {
   echo -e "1) rtorrent ${green}0.9.6 (with ipv6 support)${normal}"
   echo -e "2) rtorrent ${green}0.9.4 (with ipv6 support)${normal}"
   echo -e "3) rtorrent ${green}0.9.3${normal}"
-  echo -ne "${bold}${yellow}What version of rtorrent do you want?${normal} (Default ${green}1${normal}): "; read version
+  echo -ne "${bold}${yellow}What version of rtorrent do you want?${normal} (Default ${green}1${normal}): "; read -e version
   case $version in
     1 | "") RTVERSION=0.9.6;LTORRENT=0.13.6  ;;
     2) RTVERSION=0.9.4;LTORRENT=0.13.4  ;;
     3) RTVERSION=0.9.3;LTORRENT=0.13.3 ;;
     *) RTVERSION=0.9.6;LTORRENT=0.13.6  ;;
   esac
-  echo "We will be using rtorrent-${green}$RTVERSION${normal}/libtorrent-${green}$LTORRENT${normal}"
+  echo "${bold}${baiqingse}rTorrent $RTVERSION${normal} ${bold}will be installed${normal}"
   echo
 }
 
 # ask deluge version (if wanted) (8.1)
 function _askdeluge() {
-echo -e "${green}01)${normal} Deluge ${cyan}1.3.9${normal}"
-echo -e "${green}02)${normal} Deluge ${cyan}1.3.13${normal}"
-echo -e "${green}03)${normal} Deluge ${cyan}1.3.14${normal}"
-echo -e "${green}04)${normal} Deluge ${cyan}1.3.15${normal}"
-echo -e "${green}21)${normal} Deluge ${cyan}1.3.15 (Skip hash check)${normal}"
+echo -e "${green}01)${normal} Deluge ${green}1.3.9${normal}"
+echo -e "${green}02)${normal} Deluge ${green}1.3.13${normal}"
+echo -e "${green}03)${normal} Deluge ${green}1.3.14${normal}"
+echo -e "${green}04)${normal} Deluge ${green}1.3.15${normal}"
+echo -e "${green}21)${normal} Deluge ${green}1.3.15 (Skip hash check)${normal}"
 echo -e "${green}30)${normal} Select another version"
-echo -ne "${bold}${yellow}Which version of Deluge do you want?${normal} (Default ${cyan}05${normal}): " ; read -e version
+echo -ne "${bold}${yellow}Which version of Deluge do you want?${normal} (Default ${cyan}04${normal}): " ; read -e version
 
 case $version in
     01 | 1) DEVERSION=1.3.9 ;;
@@ -303,15 +303,15 @@ echo ; }
 
 # install qbittorrent question (8.8)
 function _askqb() {
-echo -e "${green}01)${normal} qBittorrent ${cyan}3.3.7${normal}"
-echo -e "${green}02)${normal} qBittorrent ${cyan}3.3.11${normal}"
-echo -e "${green}03)${normal} qBittorrent ${cyan}3.3.14${normal}"
-echo -e "${green}04)${normal} qBittorrent ${cyan}3.3.16${normal}"
-echo -e "${green}11)${normal} qBittorrent ${cyan}4.0.2${normal}"
-echo -e "${green}12)${normal} qBittorrent ${cyan}4.0.3${normal}"
-echo -e "${green}13)${normal} qBittorrent ${cyan}4.0.4${normal}"
-echo -e "${green}14)${normal} qBittorrent ${cyan}4.1.0${normal}"
-echo -e "${green}21)${normal} qBittorrent ${cyan}3.3.11 (Skip hash check)${normal}"
+echo -e "${green}01)${normal} qBittorrent ${green}3.3.7${normal}"
+echo -e "${green}02)${normal} qBittorrent ${green}3.3.11${normal}"
+echo -e "${green}03)${normal} qBittorrent ${green}3.3.14${normal}"
+echo -e "${green}04)${normal} qBittorrent ${green}3.3.16${normal}"
+echo -e "${green}11)${normal} qBittorrent ${green}4.0.2${normal}"
+echo -e "${green}12)${normal} qBittorrent ${green}4.0.3${normal}"
+echo -e "${green}13)${normal} qBittorrent ${green}4.0.4${normal}"
+echo -e "${green}14)${normal} qBittorrent ${green}4.1.0${normal}"
+echo -e "${green}21)${normal} qBittorrent ${green}3.3.11 (Skip hash check)${normal}"
 echo -e "${green}30)${normal} Select another version"
 echo -ne "${bold}${yellow}Which version of qBittorrent do you want?${normal} (Default ${cyan}02${normal}): " ; read -e version
 
@@ -328,7 +328,10 @@ case $version in
     30) _inputversion && QBVERSION="${inputversion}"  ;;
     * | "") QBVERSION=3.3.11 ;;
 esac
-}
+
+echo "${bold}${baiqingse}qBittorrent ${QBVERSION}${normal} ${bold}will be installed${normal}" ; echo ; }
+
+
 
 
 # install transmission question (8.5)
@@ -549,7 +552,7 @@ function _skel() {
   (echo y;echo o conf prerequisites_policy follow;echo o conf commit)>/dev/null 2>&1|cpan Digest::SHA >>"${OUTTO}" 2>&1
   mkdir -p /etc/skel/.config/deluge/plugins/
   cd /etc/skel/.config/deluge/
-  svn co https://github.com/Aniverse/inexistence/trunk/00.Installation/template/config/deluge/plugins
+  svn co https://github.com/Aniverse/inexistence/trunk/00.Installation/template/config/deluge/plugins >>"${OUTTO}" 2>&1
 }
 
 function _qmount() {
@@ -780,7 +783,7 @@ DUDID=$(python ${local_packages}/system/deluge.addHost.py)
 DWPORT=$(shuf -i 10001-11000 -n 1)
 mkdir -p /home/${username}/.config/deluge
 cd /home/${username}/.config/deluge
-svn co https://github.com/Aniverse/inexistence/trunk/00.Installation/template/config/deluge/plugins
+svn co https://github.com/Aniverse/inexistence/trunk/00.Installation/template/config/deluge/plugins >>"${OUTTO}" 2>&1
 chmod 755 /home/${username}/.config
 chmod 755 /home/${username}/.config/deluge
 cp ${local_setup}templates/core.conf.template /home/${username}/.config/deluge/core.conf
@@ -1032,7 +1035,7 @@ fi
 
 git clone https://github.com/qbittorrent/qBittorrent >>"${OUTTO}" 2>&1
 cd qBittorrent
-QBVERSION=`echo $QBVERSION | grep -oE [0-9.]+`
+ [[ $QBVERSION == '3.3.11 (Skip hash check)' ]] && QBVERSION=3.3.11
 git checkout release-$QBVERSION >>"${OUTTO}" 2>&1
 
 if [[ $QBPATCH == Yes ]]; then
