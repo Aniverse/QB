@@ -470,8 +470,6 @@ function _updates() {
   fi
 
   if [[ -e /etc/ssh/sshd_config ]]; then
-    echo "Port 4747" /etc/ssh/sshd_config >> /dev/null 2>&1
-    sed -i 's/Port 22/Port 4747/g' /etc/ssh/sshd_config
     #sed -i 's/SendEnv LANG LC_*/#SendEnv LANG LC_*/g' /etc/ssh/ssh_config
     #sed -i 's/AcceptEnv LANG LC_*/#AcceptEnv LANG LC_*/g' /etc/ssh/sshd_config
     service ssh restart >>"${OUTTO}" 2>&1
@@ -1054,7 +1052,7 @@ if [[ $QBPATCH == Yes ]]; then
     git cherry-pick 1ce71fc >>"${OUTTO}" 2>&1
 fi
 
-./configure --prefix=/usr --disable-gui >>"${OUTTO}" 2>&1
+./configure --disable-gui >>"${OUTTO}" 2>&1
 make -j$MAXCPUS >>"${OUTTO}" 2>&1
 
 mkdir -p doc-pak
@@ -1066,9 +1064,7 @@ checkinstall -y --pkgname=qbittorrent-headless --pkgversion=$QBVERSION --pkggrou
 
 cp ${local_setup}templates/sysd/qbittorrent.template/etc/systemd/system/qbittorrent@.service >/dev/null 2>&1
 systemctl enable qbittorrent@${username} >/dev/null 2>&1
-systemctl start qbittorrent@${username} >/dev/null 2>&1
 cd ; sleep 10
-systemctl stop {qbittorrent}@${username} >/dev/null 2>&1
 cp -f ${local_setup}templates/qBittorrent.conf.template /home/${username}/.config/qBittorrent/qBittorrent.conf
 sed -i "s/SCRIPTUSERNAME/${username}/g" /home/${username}/.config/qBittorrent/qBittorrent.conf
 sed -i "s/SCRIPTQBPASS/${ha1pass}/g" /home/${username}/.config/qBittorrent/qBittorrent.conf
@@ -1079,6 +1075,7 @@ mkdir -p /home/${username}/torrents/qbittorrent
 chown ${username}: /home/${username}/torrents/qbittorrent
 cd ${local_packages}
 rm -rf qBittorrent
+systemctl start qbittorrent@${username} >/dev/null 2>&1
 }
 
 
@@ -1531,9 +1528,9 @@ function _finished() {
   echo
 
 cat >/root/information.info<<EOF
-  Seedbox can be found at https://${username}:${passwd}@${ip} (Also works for FTP:5757/SSH:4747)
+  Seedbox can be found at https://${username}:${passwd}@${ip} (Also works for FTP:5757/SSH:22)
   If you need to restart rtorrent/irssi, you can type 'reload'
-  https://${username}:${passwd}@${ip} (Also works for FTP:5757/SSH:4747)
+  https://${username}:${passwd}@${ip} (Also works for FTP:5757/SSH:22)
 EOF
   rm -rf "$0" >>"${OUTTO}" 2>&1
     for i in ssh apache2 php7.0-fpm vsftpd fail2ban quota memcached cron; do
@@ -1622,8 +1619,8 @@ _denyhosts
 _askbbr
 
 tram=$( free -m | awk '/Mem/ {print $2}' )
-[[ $tram -le 1926 ]] && USESWAP=Yes
-echo -e "${bold}${red}Note that${normal} ${bold}Your RAM is below ${red}1926MB${jiacu}, memory may got exhausted when compiling${normal}"
+[[ $tram -le 2333 ]] && USESWAP=Yes
+echo -e "${bold}${red}Note that${normal} ${bold}Your RAM is below ${red}2333MB${jiacu}, memory may got exhausted when compiling${normal}"
 echo -e "${bold}${baiqingse} 1GB Additonal swap ${normal} will be used"
 
 echo -e "\n${bold}If you want to stop, Press ${on_red}Ctrl+C${normal} ${bold}; or Press ${on_green}ENTER${normal} ${bold}to start${normal}" ; [[ ! $ForceYes == 1 ]] && read input
