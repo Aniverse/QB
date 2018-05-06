@@ -1146,7 +1146,8 @@ function _insfg() {
   chmod -R 755 /home/${username}/.config/flexget /home/${username}/cookies.txt
   chown -R ${username}: /home/${username}/.config/flexget /home/${username}/cookies.txt /home/${username}/torrents/{transmission,qbittorrent,rtorrent,deluge}
 
-  flexget web passwd $passwd  >>"${OUTTO}" 2>&1
+  export passwd=$passwd
+  su ${username} -c 'flexget web passwd $passwd' >>"${OUTTO}" 2>&1
 
   cp -f /etc/QuickBox/setup/templates/sysd/flexget.template /etc/systemd/system/flexget@.service >/dev/null 2>&1
   systemctl daemon-reload
