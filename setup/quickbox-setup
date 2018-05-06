@@ -137,12 +137,13 @@ function _checkkernel() {
 
 # check if create log function (3)
 function _logcheck() {
-  echo -ne "${bold}${yellow}Do you wish to write to a log file?${normal} (Default: ${green}${bold}Y${normal}) "; read input
-    case $input in
-      [yY] | [yY][Ee][Ss] | "" ) OUTTO="/root/quickbox.$PPID.log";echo "${bold}Output is being sent to /root/quickbox.${magenta}$PPID${normal}${bold}.log${normal}" ;;
-      [nN] | [nN][Oo] ) OUTTO="/dev/null 2>&1";echo "${cyan}NO output will be logged${normal}" ;;
-    *) OUTTO="/root/quickbox.$PPID.log";echo "${bold}Output is being sent to /root/quickbox.${magenta}$PPID${normal}${bold}.log${normal}" ;;
-    esac
+# echo -ne "${bold}${yellow}Do you wish to write to a log file?${normal} (Default: ${green}${bold}Y${normal}) "; read input
+#   case $input in
+#     [yY] | [yY][Ee][Ss] | "" ) OUTTO="/root/quickbox.$PPID.log";echo "${bold}Output is being sent to /root/quickbox.${magenta}$PPID${normal}${bold}.log${normal}" ;;
+#     [nN] | [nN][Oo] ) OUTTO="/dev/null 2>&1";echo "${cyan}NO output will be logged${normal}" ;;
+#   *) OUTTO="/root/quickbox.$PPID.log";echo "${bold}Output is being sent to /root/quickbox.${magenta}$PPID${normal}${bold}.log${normal}" ;;
+#   esac
+OUTTO="/root/quickbox.$PPID.log";echo "${bold}Output is being sent to /root/quickbox.${magenta}$PPID${normal}${bold}.log${normal}"
   if [[ ! -d /root/tmp ]]; then
     sed -i 's/noexec,//g' /etc/fstab
     mount -o remount /tmp >>"${OUTTO}" 2>&1
@@ -150,8 +151,8 @@ function _logcheck() {
 }
 
 # setting system hostname function (7)
-function _hostname() {
-echo -ne "Please enter a hostname for this server (${bold}Hit ${standout}${green}ENTER${normal} to make no changes${normal}): " ; read input
+function _hostname() { echo
+echo -ne "${bold}${yellow}Please enter a hostname for this server${normal} (Hit ${standout}${green}ENTER${normal} to make no changes${normal}): " ; read -e input
 if [[ -z $input ]]; then
         echo "No hostname supplied, no changes made!!"
 else
@@ -225,6 +226,7 @@ function _ssdpblock() {
 
 # setting locale function (6)
 function _locale() {
+echo -n "Setting locale ... "
 echo 'LANGUAGE="en_US.UTF-8"' >> /etc/default/locale
 echo 'LC_ALL="en_US.UTF-8"' >> /etc/default/locale
 echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
@@ -235,6 +237,7 @@ echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
     export LC_ALL="en_US.UTF-8"
     export LANGUAGE="en_US.UTF-8"
   fi
+echo "${bold}${green}Done${normal}"
 }
 
 function _askservices() {
@@ -277,7 +280,7 @@ function _askrtorrent() {
 
 # ask deluge version (if wanted) (8.1)
 function _askdeluge() {
-echo -e "${green}01)${normal} Deluge ${green}1.3.9${normal}"
+echo -e "${green}01)${normal} Deluge ${green}1.3.12${normal}"
 echo -e "${green}02)${normal} Deluge ${green}1.3.13${normal}"
 echo -e "${green}03)${normal} Deluge ${green}1.3.14${normal}"
 echo -e "${green}04)${normal} Deluge ${green}1.3.15${normal}"
@@ -286,7 +289,7 @@ echo -e "${green}30)${normal} Select another version"
 echo -ne "${bold}${yellow}Which version of Deluge do you want?${normal} (Default ${green}04${normal}): " ; read -e version
 
 case $version in
-    01 | 1) DEVERSION=1.3.9 ;;
+    01 | 1) DEVERSION=1.3.12 ;;
     02 | 2) DEVERSION=1.3.13 ;;
     03 | 3) DEVERSION=1.3.14 ;;
     04 | 4) DEVERSION=1.3.15 ;;
@@ -453,8 +456,7 @@ function _denyhosts() {
   cat ${local_setup}templates/hostsTrackers.template >> /etc/hosts
     ;;
 
-    [nN] | [nN][Oo] | "") echo "[ ${green}+  Allowing public trackers  +${normal} ]"
-    ;;
+    [nN] | [nN][Oo] | "") sleep 0 ;;
   esac
   echo
 }
@@ -1719,29 +1721,27 @@ _bashrc
 _intro
 _checkroot
 _logcheck
-_checkkernel
-_hostname
-_askquota
-_askcontinue
+# _askcontinue
 _ssdpblock
 _locale
 clear
 
-starttime=$(date +%s)
-
 #_askservices
-_askpartition
 _adduser
+_checkkernel
+_askvsftpd
+_hostname
+_askquota
+_askpartition
 _askrtorrent
 _askdeluge
 _askqb
 _asktr
 # _askdashtheme
 dash_theme=defaulted
-_askvsftpd
-_denyhosts
 _askfg
 _askbbr
+_denyhosts
 
 tram=$( free -m | awk '/Mem/ {print $2}' )
 [[ $tram -le 2333 ]] &&  { USESWAP=Yes
@@ -1750,6 +1750,7 @@ echo -e "${bold}${baiqingse} 1GB Additonal swap ${normal} will be used\n" ; }
 
 echo -e "${bold}If you want to stop, Press ${on_red}Ctrl+C${normal} ${bold}; or Press ${on_green}ENTER${normal} ${bold}to start${normal}" ; [[ ! $ForceYes == 1 ]] && read input
 
+starttime=$(date +%s)
 clear
 echo
 echo ""
@@ -1779,7 +1780,7 @@ echo -n "Installing libtorrent-rasterbar ${green}1.0.11${normal} ... ";_install_
 echo -n "Installing Deluge $DEVERSION... ";_deluge & spinner $!;echo
 echo -n "Setting up Deluge Web Reverse Proxy ... ";_insdwApache & spinner $!;echo
 if [[ ${tr} == "yes" ]]; then
-    echo -n "Configuring Transmisson ... ";_insTr & spinner $!;echo
+    echo -n "Installing Transmisson ... ";_insTr & spinner $!;echo
     echo -n "Installing Transmisson Web Control ... ";_insTrWeb & spinner $!;echo
     echo -n "Setting up Transmission Reverse Proxy ... ";_insTrApache & spinner $!;echo
 fi
