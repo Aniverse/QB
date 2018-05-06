@@ -1,0 +1,15 @@
+[Unit]
+Description=flexget Daemon
+After=network.target
+
+[Service]
+User=%I
+ExecStart=/usr/local/bin/flexget daemon start
+ExecStartPre=/bin/rm -f /home/%I/.config/flexget/.config-lock
+ExecStop=/usr/local/bin/flexget daemon stop
+Restart=on-failure
+TimeoutStopSec=30
+WorkingDirectory=/home/%I/
+
+[Install]
+WantedBy=multi-user.target
