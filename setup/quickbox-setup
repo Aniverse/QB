@@ -72,9 +72,9 @@ function _intro() {
   echo
   echo "[${repo_title}QuickBox${normal}] ${title} Aniverse Mod Installation ${normal} "
   echo
-  echo "   ${title}              Heads Up!              	    ${normal} "
-  echo "   ${message_title}  QuickBox works with the following  ${normal} "
-  echo "   ${message_title}  Ubuntu 16.04 | Debian 8            ${normal} "
+  echo " ${title}              Heads Up!              ${normal} "
+  echo " ${message_title}  QuickBox works with the following  ${normal} "
+  echo " ${message_title}       Ubuntu 16.04 | Debian 8       ${normal} "
   echo
   echo
   echo "${green}Checking distribution ...${normal}"
@@ -151,7 +151,7 @@ OUTTO="/root/quickbox.$PPID.log";echo "${bold}Output is being sent to /root/quic
 }
 
 # setting system hostname function (7)
-function _hostname() { echo
+function _hostname() {
 echo -ne "${bold}${yellow}Please enter a hostname for this server${normal} (Hit ${standout}${green}ENTER${normal} to make no changes${normal}): " ; read -e input
 if [[ -z $input ]]; then
         echo "No hostname supplied, no changes made!!"
@@ -260,7 +260,7 @@ function _askservices() {
 
 
 # ask what rtorrent version (8)
-function _askrtorrent() {
+function _askrtorrent() { echo
   echo -e "${normal}${green}01)${normal} rtorrent ${green}0.9.6 (with ipv6 support)${normal}"
   echo -e "${green}02)${normal} rtorrent ${green}0.9.4 (with ipv6 support)${normal}"
   echo -e "${green}03)${normal} rtorrent ${green}0.9.3${normal}"
@@ -394,7 +394,7 @@ if [[ $passwd = "" ]]; then
     while [ -z $localpass ]; do
         read -ep "${jiacu}Enter password: (hit enter to generate a password) ${blue}" password1
         if [ -z $password1 ]; then
-            localpass=$(genpass)
+            localpass=$genpass
             echo "${jiacu}Random password sets to ${blue}$localpass${normal}"
         elif [ ${#password1} -lt 8 ]; then
             echo "${bold}${red}ERROR${normal} ${bold}Password needs to be at least ${red}[8]${jiacu} chars long${normal}" && continue
@@ -1744,9 +1744,9 @@ _askbbr
 _denyhosts
 
 tram=$( free -m | awk '/Mem/ {print $2}' )
-[[ $tram -le 2333 ]] &&  { USESWAP=Yes
-echo -e "${bold}${red}Note that${normal} ${bold}Your RAM is below ${red}2333MB${jiacu}, memory may got exhausted when compiling${normal}"
-echo -e "${bold}${baiqingse} 1GB Additonal swap ${normal} will be used\n" ; }
+[[ $tram -le 2333 ]] && { USESWAP=Yes ; }
+# echo -e "${bold}${red}Note that${normal} ${bold}Your RAM is below ${red}2333MB${jiacu}, memory may got exhausted when compiling${normal}"
+# echo -e "${bold}${baiqingse} 1GB Additonal swap ${normal} will be used\n"
 
 echo -e "${bold}If you want to stop, Press ${on_red}Ctrl+C${normal} ${bold}; or Press ${on_green}ENTER${normal} ${bold}to start${normal}" ; [[ ! $ForceYes == 1 ]] && read input
 
@@ -1758,7 +1758,7 @@ echo "${bold}${magenta}QuickBox will now install, this may take between${normal}
 echo "${bold}${magenta}10 and 60 minutes depending on your systems specs${normal}"
 echo ""
 [[ $USESWAP == Yes ]] && { 
-echo -n "Creating Swap ... " ; _use_swap & spinner $!; echo ; }
+echo -n "Creating Swap for low memory seedbox ... " ; _use_swap & spinner $!; echo ; }
 echo -n "Pulling QuickBox Ecosystem ... ";_repos & spinner $!;echo
 echo -n "Updating system ... ";_updates & spinner $!;echo
 echo -n "Installing all needed dependencies ... ";_depends & spinner $!;echo
