@@ -18,14 +18,14 @@ bash -c "$(wget --no-check-certificate -qO- https://github.com/Aniverse/QB/raw/A
 * Flexget：增加 Flexget 的安装，预设模板，开启 WebUI
 * Flexget：本人水平菜+人懒，没有做面板上安装 Flexget 的功能，也没做面板上开关 Flexget daemon 的功能
 * Single-user：说明下，transmission/qbittorrent/flexget 都是单用户模式的，懒得改了
-* Deluge：改为必装软件，增加 1.3.9／1.3.13／1.3.15 跳校验版 等可选版本
+* Deluge：改为必装软件，增加 1.3.13／1.3.14／1.3.15 跳校验版 等可选版本（默认 1.3.15）
 * Deluge：增加 Stats、TotalTraffic、AutoRemovePlus、YaRSS2 等一堆插件
 * Deluge：默认开启 ltconfig 0.3.1 的高性能做种模式
 * Deluge：重写安装步骤
 * Deluge：使用 deb 包来安装 libtorrent-rasterbar 1.0.11，节省时间
 * Deluge：修改 Core、WebUI 的默认设置，增大连接数，增加启用插件等等
 * qBittorrent：面板上的安装步骤我没做修改（都做成必装了也不需要在面板上安装了）
-* qBittorrent：改为必装软件，增加 3.3.11／3.3.16／4.0.4／4.1.0 等可选版本
+* qBittorrent：改为必装软件，增加 3.3.11／3.3.16／4.0.4／4.1.0 等可选版本（默认 4.0.4）
 * qBittorrent：重写 qBittorrent 的安装步骤
 * qBittorrent：使用 deb 包在 Debian 8 下安装 qt 5.5.1，节省时间
 * qBittorrent：修改默认设置，关闭 UTP、PeX 等等
@@ -33,6 +33,7 @@ bash -c "$(wget --no-check-certificate -qO- https://github.com/Aniverse/QB/raw/A
 * ruTorrent：为 spectrogram 插件安装 sox
 * Transmission：默认选项改为 Yes
 * Dashboard：安装 Flexget 的话会修改 custom menu，增加国内站点以及 Flexget 的链接
+* UI：移除询问是否创建日志的问题，运行脚本即创建日志
 * UI：移除询问是否为 10Gbps 盒子的问题
 * UI：移除是否安装 ffmpeg 的问题，使用 ffmpeg static builds
 * UI：移除用哪个面板主题的问题
