@@ -359,29 +359,81 @@ function _asktr() {
 }
 
 
+
+
+
 # adduser function (9)
 function _adduser() {
-  theshell="/bin/bash";
-  echo "${bold}${yellow}Add a Master Account user to sudoers${normal}";
-  echo -n "Username: "; read user
-  username=$(echo "$user"|sed 's/.*/\L&/')
-  useradd "${username}" -m -G www-data -s "${theshell}"
-  echo -n "Password: (hit enter to generate a password) "; read -e 'password'
-  if [[ ! -z "${password}" ]]; then
-    echo "setting password to ${password}"
-    passwd=${password}
-    echo "${username}:${passwd}" | chpasswd >>"${OUTTO}" 2>&1
-    (echo -n "${username}:${REALM}:" && echo -n "${username}:${REALM}:${passwd}" | md5sum | awk '{print $1}' ) >> "${HTPASSWD}"
-  else
-    echo "setting password to ${genpass}"
-    passwd=${genpass}
-    echo "${username}:${passwd}" | chpasswd >>"${OUTTO}" 2>&1
-    (echo -n "${username}:${REALM}:" && echo -n "${username}:${REALM}:${passwd}" | md5sum | awk '{print $1}' ) >> "${HTPASSWD}"
-  fi
-  printf "${username}:${passwd}" > /root/"$username".info.db
-  echo
-  ha1pass=`echo -n "${passwd}"|md5sum |cut -f1 -d' '`
-}
+
+# Username
+if [[ $username = "" ]]; then
+
+    theshell="/bin/bash" ; confirm_name=1
+    echo "${bold}${yellow}Add a Master Account user to sudoers${normal}";
+
+    while [[ $confirm_name = 1 ]]; do
+        while [[ $answerusername = "" ]] || [[ $reinput_name = 1 ]]; do
+            reinput_name=0
+            read -ep "${bold}Enter username: ${blue}" answerusername
+        done
+        addname=$(echo "$answerusername"|sed 's/.*/\L&/')
+        echo -n "${normal}${bold}Confirm that username is ${blue}${addname}${normal}, ${bold}${green}[Y]es${normal} or [${bold}${red}N${normal}]o? "
+        read  answer
+        case $answer in [yY] | [yY][Ee][Ss] | "" ) confirm_name=0 ;;
+                        [nN] | [nN][Oo]          ) reinput_name=1 ;;
+                        *                        ) echo "${bold}Please enter ${bold}${green}[Y]es${normal} or [${bold}${red}N${normal}]o";;
+        esac
+        username=$addname
+    done
+
+else
+
+    echo -e "${bold}Username sets to ${blue}$username${normal}\n"
+
+fi
+  
+useradd "${username}" -m -G www-data -s "${theshell}"
+
+# Password
+if [[ $passwd = "" ]]; then
+
+    while [ -z $localpass ]; do
+        read -ep "${jiacu}Enter password: (hit enter to generate a password)${blue}" password1
+        if [ -z $password1 ]; then
+            localpass=$(genpass)
+            echo "${jiacu}Random password sets to ${blue}$localpass${normal}"
+        elif [ ${#password1} -lt 8 ]; then
+            echo "${bold}${red}ERROR${normal} ${bold}Password needs to be at least ${red}[8]${jiacu} chars long${normal}" && continue
+        else
+            while [[ $password2 = "" ]]; do
+                read -ep "${jiacu}Enter the new password again: ${blue}" password2
+            done
+
+            if [ $password1 != $password2 ]; then
+                echo "${bold}${red}WARNING${normal} ${bold}Passwords do not match${normal}"
+            else
+                localpass=$password1
+            fi
+        fi
+    done
+    passwd=$localpass
+
+else
+
+    echo -e "${bold}Password sets to ${blue}$passwd${normal}\n"
+
+fi
+
+echo "${username}:${passwd}" | chpasswd >>"${OUTTO}" 2>&1
+(echo -n "${username}:${REALM}:" && echo -n "${username}:${REALM}:${passwd}" | md5sum | awk '{print $1}' ) >> "${HTPASSWD}"
+printf "${username}:${passwd}" > /root/"$username".info.db
+ha1pass=`echo -n "${passwd}"|md5sum |cut -f1 -d' '`
+
+echo ; }
+
+  
+
+
 
 
 # ask user for pure-ftpd conf (10.5)
@@ -399,7 +451,7 @@ function _askvsftpd() {
 
 # ban public trackers [iptables option] (11)
 function _denyhosts() {
-  echo -ne "${bold}${yellow}Block Public Trackers?${normal}: [y]es or [${green}n${normal}]o: "; read responce
+  echo -ne "${bold}${yellow}Block Public Trackers?${normal} [y]es or [${green}n${normal}]o: "; read responce
   case $responce in
     [yY] | [yY][Ee][Ss])
 
@@ -1688,13 +1740,13 @@ starttime=$(date +%s)
 
 #_askservices
 _askpartition
+_adduser
 _askrtorrent
 _askdeluge
 _askqb
 _asktr
 # _askdashtheme
 dash_theme=defaulted
-_adduser
 _askvsftpd
 _denyhosts
 _askfg
@@ -1713,7 +1765,8 @@ echo ""
 echo "${bold}${magenta}QuickBox will now install, this may take between${normal}"
 echo "${bold}${magenta}10 and 60 minutes depending on your systems specs${normal}"
 echo ""
-[[ $USESWAP == Yes ]] && { echo -n "Creating Swap ... " ; _use_swap & spinner $!; echo ; }
+[[ $USESWAP == Yes ]] && { 
+echo -n "Creating Swap ... " ; _use_swap & spinner $!; echo ; }
 echo -n "Pulling QuickBox Ecosystem ... ";_repos & spinner $!;echo
 echo -n "Updating system ... ";_updates & spinner $!;echo
 echo -n "Installing all needed dependencies ... ";_depends & spinner $!;echo
@@ -1727,12 +1780,12 @@ echo -n "Setting up Limited Shell environment ... ";_lshell & spinner $!;echo
 echo -n "Installing ffmpeg for screenshots ... ";_ffmpeg & spinner $!;echo
 _apachesudo
 echo -n "Installing xmlrpc-c-${green}1.33.12${normal} ... ";_xmlrpc & spinner $!;echo
-echo -n "Installing libtorrent-${green}$LTORRENT${normal} ... ";_libtorrent & spinner $!;echo
-echo -n "Installing rtorrent-${green}$RTVERSION${normal} ... ";_rtorrent & spinner $!;echo
-echo -n "Installing rutorrent into /srv ... ";_rutorrent & spinner $!;echo
-echo -n "Installing rutorrent plugins ... ";_rutorrent-plugins & spinner $!;echo
-echo -n "Installing deluge ... ";_deluge & spinner $!;echo
-echo -n "Setting up deluge Web Reverse Proxy ... ";_insdwApache & spinner $!;echo
+echo -n "Installing libtorrent-rakshasa-${green}$LTORRENT${normal} ... ";_libtorrent & spinner $!;echo
+echo -n "Installing rTorrent-${green}$RTVERSION${normal} ... ";_rtorrent & spinner $!;echo
+echo -n "Installing ruTorrent into /srv ... ";_rutorrent & spinner $!;echo
+echo -n "Installing ruTorrent plugins ... ";_rutorrent-plugins & spinner $!;echo
+echo -n "Installing Deluge ... ";_deluge & spinner $!;echo
+echo -n "Setting up Deluge Web Reverse Proxy ... ";_insdwApache & spinner $!;echo
 if [[ ${tr} == "yes" ]]; then
     echo -n "Configuring Transmisson ... ";_insTr & spinner $!;echo
     echo -n "Installing Transmisson Web Control ... ";_insTrWeb & spinner $!;echo
@@ -1740,7 +1793,8 @@ if [[ ${tr} == "yes" ]]; then
 fi
 echo -n "Installing qBittorrent ... ";_qbittorrent & spinner $!;echo
 echo -n "Setting up qBittorrent Reverse Proxy ... ";_insqBApache & spinner $!;echo
-[[ $fg == yes ]] && { echo -n "Installing Flexget ... " ; _insfg & spinner $!; echo ; }
+[[ $fg == yes ]] && { 
+echo -n "Installing Flexget ... " ; _insfg & spinner $!; echo ; }
 echo -n "Installing mktorrent from source ... ";_mktorrent & spinner $!;echo
 echo -n "Installing quickbox dashboard ... ";_dashboard & spinner $!;echo
 echo -n "Building system file indexer (h5ai) ... ";_fileindexer & spinner $!;echo
