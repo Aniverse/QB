@@ -253,23 +253,12 @@ function _askservices() {
   echo
 }
 
-# ask what rtorrent version (8)
-function _askdashtheme() {
-  echo -e "1) QuickBox - ${green}smoked${normal} :: Dark theme"
-  echo -e "2) QuickBox - ${green}defaulted${normal} :: Light theme"
-  echo -ne "${bold}${yellow}Pick your QuickBox Dashboard Theme${normal} (Default ${green}1${normal}): "; read version
-  case $version in
-    1 | "") dash_theme=smoked  ;;
-    2) dash_theme=defaulted  ;;
-    *) dash_theme=smoked ;;
-  esac
-  echo "We will be using QuickBox Theme : ${green}$dash_theme${normal}"
-  echo
-}
+
+
 
 # ask what rtorrent version (8)
 function _askrtorrent() {
-  echo -e "${green}01)${normal} rtorrent ${green}0.9.6 (with ipv6 support)${normal}"
+  echo -e "${normal}${green}01)${normal} rtorrent ${green}0.9.6 (with ipv6 support)${normal}"
   echo -e "${green}02)${normal} rtorrent ${green}0.9.4 (with ipv6 support)${normal}"
   echo -e "${green}03)${normal} rtorrent ${green}0.9.3${normal}"
   echo -ne "${bold}${yellow}Which version of rtorrent do you want?${normal} (Default ${green}02${normal}): "; read -e version
@@ -282,6 +271,9 @@ function _askrtorrent() {
   echo "${bold}${baiqingse}rTorrent $RTVERSION${normal} ${bold}will be installed${normal}"
   echo
 }
+
+
+
 
 # ask deluge version (if wanted) (8.1)
 function _askdeluge() {
@@ -322,9 +314,8 @@ echo -e "${green}11)${normal} qBittorrent ${green}4.0.2${normal}"
 echo -e "${green}12)${normal} qBittorrent ${green}4.0.3${normal}"
 echo -e "${green}13)${normal} qBittorrent ${green}4.0.4${normal}"
 echo -e "${green}14)${normal} qBittorrent ${green}4.1.0${normal}"
-echo -e "${green}21)${normal} qBittorrent ${green}3.3.11 (Skip hash check)${normal}"
 echo -e "${green}30)${normal} Select another version"
-echo -ne "${bold}${yellow}Which version of qBittorrent do you want?${normal} (Default ${green}02${normal}): " ; read -e version
+echo -ne "${bold}${yellow}Which version of qBittorrent do you want?${normal} (Default ${green}13${normal}): " ; read -e version
 
 case $version in
     01 | 1) QBVERSION=3.3.7 ;;
@@ -337,7 +328,7 @@ case $version in
     14) QBVERSION=4.1.0 ;;
     21) QBVERSION='3.3.11 (Skip hash check)' ;;
     30) _inputversion && QBVERSION="${inputversion}"  ;;
-    * | "") QBVERSION=3.3.11 ;;
+    * | "") QBVERSION=4.0.4 ;;
 esac
 
 echo "${bold}${baiqingse}qBittorrent ${QBVERSION}${normal} ${bold}will be installed${normal}" ; echo ; }
@@ -398,7 +389,7 @@ useradd "${username}" -m -G www-data -s "${theshell}"
 if [[ $passwd = "" ]]; then
 
     while [ -z $localpass ]; do
-        read -ep "${jiacu}Enter password: (hit enter to generate a password)${blue}" password1
+        read -ep "${jiacu}Enter password: (hit enter to generate a password) ${blue}" password1
         if [ -z $password1 ]; then
             localpass=$(genpass)
             echo "${jiacu}Random password sets to ${blue}$localpass${normal}"
@@ -805,7 +796,7 @@ build-essential pkg-config autoconf automake libtool git checkinstall           
 libboost-dev libboost-system-dev libboost-chrono-dev libboost-random-dev libssl-dev \
 geoip-database libgeoip-dev                                                         \
 libboost-python-dev                                                                 \
-zlib1g-dev
+zlib1g-dev >>"${OUTTO}" 2>&1;
 
 if [[ $CODENAME == jessie ]]; then
     wget --no-check-certificate https://github.com/Aniverse/BitTorrentClientCollection/raw/master/Deb%20Package/Jessie/libtorrent-rasterbar_1.0.11_jessie_amd64.deb -qO lt.deb
@@ -815,7 +806,8 @@ elif [[ $CODENAME == stretch ]]; then
     wget --no-check-certificate https://github.com/Aniverse/BitTorrentClientCollection/raw/master/Deb%20Package/Stretch/libtorrent-rasterbar_1.0.11_stretch_amd64.deb -qO lt.deb
 fi
 
-dpkg -i lt.deb && rm -rf lt.deb
+dpkg -i lt.deb >>"${OUTTO}" 2>&1;
+rm -rf lt.deb
 ldconfig ; }
 
 
@@ -824,7 +816,6 @@ ldconfig ; }
 # 安装 Deluge
 function _deluge() { cd
 
-_install_lt_deb_1011 >>"${OUTTO}" 2>&1;
 apt-get install -y python python-twisted python-openssl python-setuptools intltool python-xdg python-chardet geoip-database python-notify python-pygame python-glade2 librsvg2-common xdg-utils python-mako >>"${OUTTO}" 2>&1
 
 if [[ $DESKIP == Yes ]]; then
@@ -1779,22 +1770,23 @@ fi
 echo -n "Setting up Limited Shell environment ... ";_lshell & spinner $!;echo
 echo -n "Installing ffmpeg for screenshots ... ";_ffmpeg & spinner $!;echo
 _apachesudo
-echo -n "Installing xmlrpc-c-${green}1.33.12${normal} ... ";_xmlrpc & spinner $!;echo
-echo -n "Installing libtorrent-rakshasa-${green}$LTORRENT${normal} ... ";_libtorrent & spinner $!;echo
-echo -n "Installing rTorrent-${green}$RTVERSION${normal} ... ";_rtorrent & spinner $!;echo
+echo -n "Installing xmlrpc-c ${green}1.33.12${normal} ... ";_xmlrpc & spinner $!;echo
+echo -n "Installing libtorrent-rakshasa ${green}$LTORRENT${normal} ... ";_libtorrent & spinner $!;echo
+echo -n "Installing rTorrent ${green}$RTVERSION${normal} ... ";_rtorrent & spinner $!;echo
 echo -n "Installing ruTorrent into /srv ... ";_rutorrent & spinner $!;echo
 echo -n "Installing ruTorrent plugins ... ";_rutorrent-plugins & spinner $!;echo
-echo -n "Installing Deluge ... ";_deluge & spinner $!;echo
+echo -n "Installing libtorrent-rasterbar ${green}1.0.11${normal} ... ";_install_lt_deb_1011 & spinner $!;echo
+echo -n "Installing Deluge $DEVERSION... ";_deluge & spinner $!;echo
 echo -n "Setting up Deluge Web Reverse Proxy ... ";_insdwApache & spinner $!;echo
 if [[ ${tr} == "yes" ]]; then
     echo -n "Configuring Transmisson ... ";_insTr & spinner $!;echo
     echo -n "Installing Transmisson Web Control ... ";_insTrWeb & spinner $!;echo
     echo -n "Setting up Transmission Reverse Proxy ... ";_insTrApache & spinner $!;echo
 fi
-echo -n "Installing qBittorrent ... ";_qbittorrent & spinner $!;echo
+echo -n "Installing qBittorrent $QBVERSION ... ";_qbittorrent & spinner $!;echo
 echo -n "Setting up qBittorrent Reverse Proxy ... ";_insqBApache & spinner $!;echo
 [[ $fg == yes ]] && { 
-echo -n "Installing Flexget ... " ; _insfg & spinner $!; echo ; }
+echo -n "Installing flexget ... " ; _insfg & spinner $!; echo ; }
 echo -n "Installing mktorrent from source ... ";_mktorrent & spinner $!;echo
 echo -n "Installing quickbox dashboard ... ";_dashboard & spinner $!;echo
 echo -n "Building system file indexer (h5ai) ... ";_fileindexer & spinner $!;echo
