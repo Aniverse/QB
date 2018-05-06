@@ -40,10 +40,10 @@ echo -e "\n${baihongse}${bold} ATTENTION ${normal} ${bold}Make sure to input the
 read -ep "${bold}${yellow}Input the version you want: ${cyan}" inputversion; echo -n "${normal}" ; }
 
 # 增加 swap
-function _use_swap() { dd if=/dev/zero of=/root/.swapfile bs=1M count=1024  ;  mkswap /root/.swapfile  ;  swapon /root/.swapfile  ;  swapon -s  ;  }
+function _use_swap() { dd if=/dev/zero of=/root/.swapfile bs=1M count=1024  >>"${OUTTO}" 2>&1 ;  mkswap /root/.swapfile  >>"${OUTTO}" 2>&1 ;  swapon /root/.swapfile  >>"${OUTTO}" 2>&1 ;  swapon -s  >>"${OUTTO}" 2>&1 ;  }
 
 # 关掉之前开的 swap
-function _disable_swap() { swapoff /root/.swapfile  ;  rm -f /.swapfile ; }
+function _disable_swap() { swapoff /root/.swapfile  >>"${OUTTO}" 2>&1 ;  rm -f /.swapfile >>"${OUTTO}" 2>&1 ; }
 
 # 初始化
 function _init() {
