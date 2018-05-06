@@ -1150,6 +1150,7 @@ function _insfg() {
   systemctl daemon-reload
   systemctl enable /etc/systemd/system/flexget@${username}.service >/dev/null 2>&1
   systemctl start flexget@${username} >/dev/null 2>&1
+  touch /install/.flexget.lock
 
 }
 
@@ -1196,6 +1197,7 @@ function _dashboard() {
   cp -r ${local_dashboard}. /srv/rutorrent/home
   touch /srv/rutorrent/home/db/output.log
   touch /srv/rutorrent/home/db/.${dash_theme}.lock
+  [[ -e /install/.flexget.lock ]] && cp -f ${local_dashboard}custom2/custom.menu.php /srv/rutorrent/home/custom/custom.menu.php
 }
 
 # function to install _h5ai file indexer (24x)
