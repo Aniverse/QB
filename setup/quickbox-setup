@@ -226,7 +226,7 @@ function _ssdpblock() {
 
 # setting locale function (6)
 function _locale() {
-echo -n "\nSetting locale ... "
+echo -ne "\n${bold}Setting locale ... "
 echo 'LANGUAGE="en_US.UTF-8"' >> /etc/default/locale
 echo 'LC_ALL="en_US.UTF-8"' >> /etc/default/locale
 echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
@@ -237,7 +237,7 @@ echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
     export LC_ALL="en_US.UTF-8"
     export LANGUAGE="en_US.UTF-8"
   fi
-echo "${bold}${green}Done${normal}"
+echo "${green}Done${normal}"
 }
 
 function _askservices() {
@@ -358,13 +358,12 @@ function _asktr() {
 
 # adduser function (9)
 function _adduser() {
-
+theshell="/bin/bash"
 # Username
 if [[ $username = "" ]]; then
 
-    theshell="/bin/bash" ; confirm_name=1
-    echo "${bold}${yellow}Add a Master Account user to sudoers${normal}";
-
+    echo "${bold}${yellow}Add a Master Account user to sudoers${normal}"
+    confirm_name=1
     while [[ $confirm_name = 1 ]]; do
         while [[ $answerusername = "" ]] || [[ $reinput_name = 1 ]]; do
             reinput_name=0
@@ -386,7 +385,7 @@ else
 
 fi
   
-useradd "${username}" -m -G www-data -s "${theshell}" >>"${OUTTO}" 2>&1
+useradd "${username}" -s "${theshell}" -m -G www-data >>"${OUTTO}" 2>&1
 
 # Password
 if [[ $passwd = "" ]]; then
@@ -1755,7 +1754,7 @@ clear
 echo
 echo ""
 echo "${bold}${magenta}QuickBox will now install, this may take between${normal}"
-echo "${bold}${magenta}10 and 60 minutes depending on your systems specs${normal}"
+echo "${bold}${magenta}5 and 90 minutes depending on your systems specs${normal}"
 echo ""
 [[ $USESWAP == Yes ]] && { 
 echo -n "Creating Swap for low memory seedbox ... " ; _use_swap & spinner $!; echo ; }
@@ -1777,14 +1776,14 @@ echo -n "Installing rTorrent ${green}$RTVERSION${normal} ... ";_rtorrent & spinn
 echo -n "Installing ruTorrent into /srv ... ";_rutorrent & spinner $!;echo
 echo -n "Installing ruTorrent plugins ... ";_rutorrent-plugins & spinner $!;echo
 echo -n "Installing libtorrent-rasterbar ${green}1.0.11${normal} ... ";_install_lt_deb_1011 & spinner $!;echo
-echo -n "Installing Deluge $DEVERSION... ";_deluge & spinner $!;echo
+echo -n "Installing Deluge ${green}$DEVERSION${normal}... ";_deluge & spinner $!;echo
 echo -n "Setting up Deluge Web Reverse Proxy ... ";_insdwApache & spinner $!;echo
 if [[ ${tr} == "yes" ]]; then
     echo -n "Installing Transmisson ... ";_insTr & spinner $!;echo
     echo -n "Installing Transmisson Web Control ... ";_insTrWeb & spinner $!;echo
     echo -n "Setting up Transmission Reverse Proxy ... ";_insTrApache & spinner $!;echo
 fi
-echo -n "Installing qBittorrent $QBVERSION ... ";_qbittorrent & spinner $!;echo
+echo -n "Installing qBittorrent ${green}$QBVERSION${normal} ... ";_qbittorrent & spinner $!;echo
 echo -n "Setting up qBittorrent Reverse Proxy ... ";_insqBApache & spinner $!;echo
 [[ $fg == yes ]] && { 
 echo -n "Installing flexget ... " ; _insfg & spinner $!; echo ; }
