@@ -15,12 +15,16 @@ bash -c "$(wget --no-check-certificate -qO- https://github.com/Aniverse/QB/raw/A
 我的改动比较粗糙，基本上只改了 setup，其他没怎么动，仅在 Vultr VPS Debian 8 下测试过，其他情况没试过（懒）  
 这些改动带来的小问题应该是有的（不过原版的 QuickBox 本身小问题也很多……），然而我之后也不一定会维护这个版本……    
 
+* Flexget：增加 Flexget 的安装，预设模板，开启 WebUI
+* Flexget：本人水平菜+人懒，没有做面板上安装 Flexget 的功能，也没做面板上开关 Flexget daemon 的功能
+* Single-user：说明下，transmission/qbittorrent/flexget 都是单用户模式的，懒得改了
 * Deluge：改为必装软件，增加 1.3.9／1.3.13／1.3.15 跳校验版 等可选版本
 * Deluge：增加 Stats、TotalTraffic、AutoRemovePlus、YaRSS2 等一堆插件
 * Deluge：默认开启 ltconfig 0.3.1 的高性能做种模式
 * Deluge：重写安装步骤
 * Deluge：使用 deb 包来安装 libtorrent-rasterbar 1.0.11，节省时间
 * Deluge：修改 Core、WebUI 的默认设置，增大连接数，增加启用插件等等
+* qBittorrent：面板上的安装步骤我没做修改（都做成必装了也不需要在面板上安装了）
 * qBittorrent：改为必装软件，增加 3.3.11／3.3.16／4.0.4／4.1.0 等可选版本
 * qBittorrent：重写 qBittorrent 的安装步骤
 * qBittorrent：使用 deb 包在 Debian 8 下安装 qt 5.5.1，节省时间
