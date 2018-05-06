@@ -387,7 +387,7 @@ function _adduser() {
 # ask user for pure-ftpd conf (10.5)
 function _askvsftpd() {
   local DEFAULTIP=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1');
-  echo -ne "${bold}${yellow}Please, write your public server IP (used for ftp)${normal} (Default: ${green}${bold}$DEFAULTIP${normal}) "; read input
+  echo -ne "${bold}${yellow}Write your public server IP${normal} (Default: ${green}${bold}$DEFAULTIP${normal}) "; read input
   if [[ -z "$input" ]]; then
     IP=$DEFAULTIP
   else
@@ -435,7 +435,7 @@ function _askfg() {
 
 # install bbr question (x)
 function _askbbr() {
-  echo -ne "${bold}${yellow}Would you like to install bbr? (Used for Congestion Control)${normal} [${green}y${normal}]es or [n]o: "; read responce
+  echo -ne "${bold}${yellow}Would you like to install bbr?${normal} [${green}y${normal}]es or [n]o: "; read responce
   case $responce in
     [yY] | [yY][Ee][Ss] | "" ) bbr=yes ;;
     [nN] | [nN][Oo]) bbr=no ;;
@@ -1146,7 +1146,7 @@ function _insfg() {
 
   flexget web passwd $passwd  >>"${OUTTO}" 2>&1
 
-  cp -f ${local_setup}templates/sysd/flexget.template /etc/systemd/system/flexget@.service >/dev/null 2>&1
+  cp -f /etc/QuickBox/setup/templates/sysd/flexget.template /etc/systemd/system/flexget@.service >/dev/null 2>&1
   systemctl daemon-reload
   systemctl enable /etc/systemd/system/flexget@${username}.service >/dev/null 2>&1
   systemctl start flexget@${username} >/dev/null 2>&1
@@ -1197,7 +1197,7 @@ function _dashboard() {
   cp -r ${local_dashboard}. /srv/rutorrent/home
   touch /srv/rutorrent/home/db/output.log
   touch /srv/rutorrent/home/db/.${dash_theme}.lock
-  [[ -e /install/.flexget.lock ]] && cp -f ${local_dashboard}custom2/custom.menu.php /srv/rutorrent/home/custom/custom.menu.php
+  [[ -e /install/.flexget.lock ]] && { rm -f /srv/rutorrent/home/custom/custom.menu.php ; cp -f /etc/QuickBox/dashboard/custom2/custom.menu.php /srv/rutorrent/home/custom/custom.menu.php }
 }
 
 # function to install _h5ai file indexer (24x)
@@ -1737,7 +1737,7 @@ if [[ ${tr} == "yes" ]]; then
 fi
 echo -n "Installing qBittorrent ... ";_qbittorrent & spinner $!;echo
 echo -n "Setting up qBittorrent Reverse Proxy ... ";_insqBApache & spinner $!;echo
-[[ $fg == Yes ]] && { echo -n "Installing Flexget ... " ; _insfg & spinner $!; echo ; }
+[[ $fg == yes ]] && { echo -n "Installing Flexget ... " ; _insfg & spinner $!; echo ; }
 echo -n "Installing mktorrent from source ... ";_mktorrent & spinner $!;echo
 echo -n "Installing quickbox dashboard ... ";_dashboard & spinner $!;echo
 echo -n "Building system file indexer (h5ai) ... ";_fileindexer & spinner $!;echo
