@@ -1172,7 +1172,7 @@ EOF
 # function to install flexget
 function _insfg() {
 
-  DWPORT=$(grep port /home/black/.config/deluge/web.conf | grep -oE [0-9]+)
+  DWPORT=$(grep port /home/${username}/.config/deluge/web.conf | grep -oE [0-9]+)
 
   apt-get -y install python-pip >>"${OUTTO}" 2>&1
   pip install --upgrade pip setuptools >>"${OUTTO}" 2>&1
