@@ -51,12 +51,12 @@ $U2_URL = "https://u2.dmhy.org/torrents.php";
 
 
 <!-- // INSERT YOUR CUSTOM EXTERNAL or INTERNAL MENU ITEMS HERE! // -->
-<li><a class="grayscale" href="<?php echo "$FlexgetURL"; ?>" target="_blank"><img src="img/brands/flexget.png" class="brand-ico"> <span>Flexget</span></a></li>
+<li><a class="grayscale" href="<?php echo "$FlexgetURL"; ?>" target="_blank"><img src="img/brands/flexget.png" class="brand-ico"> <span>Flexget Web</span></a></li>
 <li><a class="grayscale" href="<?php echo "$TTG_URL"; ?>" target="_blank"><img src="img/trackers/ttg.png" class="brand-ico"> <span>ToTheGlory</span></a></li>
 <li><a class="grayscale" href="<?php echo "$HDC_URL"; ?>" target="_blank"><img src="img/trackers/hdchina.png" class="brand-ico"> <span>HDChina</span></a></li>
 <li><a class="grayscale" href="<?php echo "$CHD_URL"; ?>" target="_blank"><img src="img/trackers/chdbits.png" class="brand-ico"> <span>CHDBits</span></a></li>
 <li><a class="grayscale" href="<?php echo "$MT_URL"; ?>" target="_blank"><img src="img/trackers/mteam.png" class="brand-ico"> <span>M-Team</span></a></li>
 <li><a class="grayscale" href="<?php echo "$HDS_URL"; ?>" target="_blank"><img src="img/trackers/hdsky.png" class="brand-ico"> <span>HDSky</span></a></li>
 <li><a class="grayscale" href="<?php echo "$CMCT_URL"; ?>" target="_blank"><img src="img/trackers/cmct.png" class="brand-ico"> <span>CMCT</span></a></li>
-<li><a class="grayscale" href="<?php echo "$OB_URL"; ?>" target="_blank"><img src="img/trackers/ob.png" class="brand-ico"> <span>OurBits</span></a></li>
-<li><a class="grayscale" href="<?php echo "$U2_URL"; ?>" target="_blank"><img src="img/trackers/u2.png" class="brand-ico"> <span>u2</span></a></li>
+<li><a class="grayscale" href="<?php echo "$OB_URL"; ?>" target="_blank"><img src="img/trackers/ourbits.png" class="brand-ico"> <span>OurBits</span></a></li>
+<li><a class="grayscale" href="<?php echo "$U2_URL"; ?>" target="_blank"><img src="img/trackers/u2.png" class="brand-ico"> <span>u2.dmhy</span></a></li>
