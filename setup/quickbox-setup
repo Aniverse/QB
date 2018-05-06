@@ -226,7 +226,7 @@ function _ssdpblock() {
 
 # setting locale function (6)
 function _locale() {
-echo -n "Setting locale ... "
+echo -n "\nSetting locale ... "
 echo 'LANGUAGE="en_US.UTF-8"' >> /etc/default/locale
 echo 'LC_ALL="en_US.UTF-8"' >> /etc/default/locale
 echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
@@ -386,7 +386,7 @@ else
 
 fi
   
-useradd "${username}" -m -G www-data -s "${theshell}"
+useradd "${username}" -m -G www-data -s "${theshell}" >>"${OUTTO}" 2>&1
 
 # Password
 if [[ $passwd = "" ]]; then
