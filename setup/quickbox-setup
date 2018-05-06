@@ -1197,7 +1197,7 @@ function _dashboard() {
   cp -r ${local_dashboard}. /srv/rutorrent/home
   touch /srv/rutorrent/home/db/output.log
   touch /srv/rutorrent/home/db/.${dash_theme}.lock
-  [[ -e /install/.flexget.lock ]] && { rm -f /srv/rutorrent/home/custom/custom.menu.php ; cp -f /etc/QuickBox/dashboard/custom2/custom.menu.php /srv/rutorrent/home/custom/custom.menu.php }
+  [[ -e /install/.flexget.lock ]] && { rm -f /srv/rutorrent/home/custom/custom.menu.php ; cp -f /etc/QuickBox/dashboard/custom2/custom.menu.php /srv/rutorrent/home/custom/custom.menu.php ; }
 }
 
 # function to install _h5ai file indexer (24x)

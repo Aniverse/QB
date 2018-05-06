@@ -13,7 +13,7 @@ bash -c "$(wget --no-check-certificate -qO- https://github.com/Aniverse/QB/raw/A
 
 这个版本是在 [efs 的修改版](https://github.com/amefs/QB) 上再次修改的版本  
 我的改动比较粗糙，基本上只改了 setup，其他没怎么动，仅在 Vultr VPS Debian 8 下测试过，其他情况没试过（懒）  
-这些改动带来的小问题应该是有的（不过原版的 QuickBox 本身小问题也很多……），然而我之后也不一定会维护这个版本……    
+这些改动带来的小问题应该是有的（不过原版的 QuickBox 本身小问题也很多……），然而我之后也不一定会维护这个版本……  
 
 * Flexget：增加 Flexget 的安装，预设模板，开启 WebUI
 * Flexget：本人水平菜+人懒，没有做面板上安装 Flexget 的功能，也没做面板上开关 Flexget daemon 的功能
@@ -38,6 +38,7 @@ bash -c "$(wget --no-check-certificate -qO- https://github.com/Aniverse/QB/raw/A
 * UI：修改安装用时的统计，精确到秒
 * UI：安装软件提问顺序改变
 * UI：部分界面调整
+* Dashboard：安装 Flexget 的话会修改 custom menu，增加国内站点以及 Flexget 的链接
 * 把安装 git lsb-release，git clone 等步骤写到脚本里，简化运行命令
 * 对于内存小于 2333MB 的盒子启用 swap
 * 安装 bluray、jietu 等脚本
