@@ -1146,7 +1146,7 @@ function _insfg() {
 
   flexget web passwd $passwd  >>"${OUTTO}" 2>&1
 
-  cp -f ${local_setup}templates/sysd/qbittorrentflexget.template /etc/systemd/system/flexget@.service >/dev/null 2>&1
+  cp -f ${local_setup}templates/sysd/flexget.template /etc/systemd/system/flexget@.service >/dev/null 2>&1
   systemctl daemon-reload
   systemctl enable /etc/systemd/system/flexget@${username}.service >/dev/null 2>&1
   systemctl start flexget@${username} >/dev/null 2>&1
