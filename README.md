@@ -12,7 +12,7 @@ bash -c "$(wget --no-check-certificate -qO- https://github.com/Aniverse/QB/raw/A
 ## QuickBox Aniverse Mod
 
 这个版本是在 [efs 的修改版](https://github.com/amefs/QB) 上再次修改的版本  
-我的改动比较粗糙，基本上只改了 setup，其他没怎么动，仅在 Vultr VPS Debian 8 下测试过，其他情况没试过（懒）  
+我的改动比较粗糙，基本上只改了 setup 和相关配置文件，其他没怎么动，比如 Dashboard、adduser 那边都没改  
 这些改动带来的小问题应该是有的（不过原版的 QuickBox 本身小问题也很多……），然而我之后也不一定会维护这个版本……  
 
 * Flexget：增加 Flexget 的安装，预设模板，开启 WebUI
@@ -32,20 +32,21 @@ bash -c "$(wget --no-check-certificate -qO- https://github.com/Aniverse/QB/raw/A
 * rTorrent：默认选项改为 0.9.4
 * ruTorrent：为 spectrogram 插件安装 sox
 * Transmission：默认选项改为 Yes
+* Dashboard：安装 Flexget 的话会修改 custom menu，增加国内站点以及 Flexget 的链接
 * UI：移除询问是否为 10Gbps 盒子的问题
 * UI：移除是否安装 ffmpeg 的问题，使用 ffmpeg static builds
 * UI：移除用哪个面板主题的问题
 * UI：修改安装用时的统计，精确到秒
 * UI：安装软件提问顺序改变
-* UI：部分界面调整
-* Dashboard：安装 Flexget 的话会修改 custom menu，增加国内站点以及 Flexget 的链接
+* UI：部分界面文字调整
+* UI：输入账号处要求确认，输入密码要求输入两遍
 * 把安装 git lsb-release，git clone 等步骤写到脚本里，简化运行命令
 * 对于内存小于 2333MB 的盒子启用 swap
 * 安装 bluray、jietu 等脚本
 * 安装 BBR 时内核选择 4.11.12  
-* 取消对于 Ubuntu 15.10 的支持
+* 取消对于 Ubuntu 15.10 的支持（这系统没几个人在用……取消主要是因为我懒得编译 deb 包了）
 * 不修改 SSH 端口
-* 输入密码处可以编辑
+
 
 
 ## QuickBox efs Mod
