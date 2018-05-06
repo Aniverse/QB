@@ -110,7 +110,7 @@ tasks:
 # accept_all 是指把 RSS 链接里的所有种子都下载下来，不做过滤
     accept_all: yes
 # download 是说要把下载下来的种子文件存放在哪里，一般我们都将其存放在 BT 客户端的监控目录，比如以下的 Deluge 监控目录
-    download: /home/SCRIPTUSERNAME/deluge/dwatch
+    download: /home/SCRIPTUSERNAME/dwatch
 
 
 # Flexget WebUI 设定，保持默认即可
